@@ -1,5 +1,5 @@
 # Text-to-Image-Synthesis
-Pytorch implementation of Generative Adversarial Text-to-Image Synthesis paper
+Pytorch implementation of Generative Adversarial Text-to-Image Synthesis paper https://arxiv.org/abs/1605.05396
 
 ## ToDo:
 - Improve the method of sampling image, text pairs
