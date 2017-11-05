@@ -1,0 +1,9 @@
+birds_images_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/CUB_200_2011/CUB_200_2011/images/'
+birds_embedding_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/cub_icml/'
+# birds_dataset_path: 'dataset/birds.hdf5'
+birds_dataset_path: '/scratch/aelnouby/text2image/birds.hdf5'
+val_split_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/cub_icml/valclasses.txt'
+train_split_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/cub_icml/trainclasses.txt'
+test_split_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/cub_icml/testclasses.txt'
+
+
