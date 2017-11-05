@@ -1,1 +1,5 @@
 pre-trained models/*
+dataset/*
+models/*
+*.pyc
+.idea/
