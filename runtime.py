@@ -7,6 +7,6 @@ args = parser.parse_args()
 trainer = Trainer()
 
 if args.vanilla:
-    trainer.train_vanilla_gan()
+    trainer.train_gan()
 else:
-    trainer.train()
+    trainer.train_gan_cls()
