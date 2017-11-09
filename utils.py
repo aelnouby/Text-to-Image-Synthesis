@@ -23,7 +23,7 @@ class Concat_embed(nn.Module):
 
 class Utils(object):
     def smooth_label(tensor, offset):
-        indices = np.random.choice(range(len(tensor)), int(len(tensor) / 3.0))
+        indices = np.random.choice(range(len(tensor)), int(len(tensor) / 2.0))
         prob = np.random.rand(len(indices))
 
         tensor[indices] = tensor[indices] + (offset * prob)
