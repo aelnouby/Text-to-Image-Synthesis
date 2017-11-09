@@ -54,9 +54,8 @@ class CUBDataset(Dataset):
                 'wrong_image': torch.FloatTensor(wrong_image)
                  }
 
-        if self.transform:
-            sample['right_image'] = sample['right_image'].sub_(128).div_(128)
-            sample['wrong_image'] =sample['wrong_image'].sub_(128).div_(128)
+        sample['right_image'] = sample['right_image'].sub_(128).div_(128)
+        sample['wrong_image'] =sample['wrong_image'].sub_(128).div_(128)
 
         return sample
 
