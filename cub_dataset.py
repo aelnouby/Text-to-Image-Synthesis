@@ -8,6 +8,7 @@ from PIL import Image
 import torch
 from torch.autograd import Variable
 import pdb
+import torch.nn.functional as F
 
 class CUBDataset(Dataset):
 
@@ -47,8 +48,6 @@ class CUBDataset(Dataset):
         right_image = self.validate_image(right_image)
         wrong_image = self.validate_image(wrong_image)
 
-        right_embed = right_embed[np.random.randint(right_embed.shape[0])]
-
         sample = {
                 'right_image': torch.FloatTensor(right_image),
                 'right_emed': torch.FloatTensor(right_embed),
@@ -56,7 +55,8 @@ class CUBDataset(Dataset):
                  }
 
         if self.transform:
-            sample = self.transform(sample)
+            sample['right_image'] = sample['right_image'].sub_(128).div_(128)
+            sample['wrong_image'] =sample['wrong_image'].sub_(128).div_(128)
 
         return sample
 
