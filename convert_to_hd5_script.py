@@ -8,8 +8,6 @@ from PIL import Image
 import yaml
 import io
 import pdb
-import tqdm
-
 
 with open('config.yaml', 'r') as f:
     config = yaml.load(f)
@@ -40,17 +38,20 @@ for _class in sorted(os.listdir(embedding_path)):
 	for example in sorted(glob(data_path + "/*.t7")):
 		example_data = load_lua(example)
 		img_path = example_data['img']
-		embeddings = example_data['txt']
+		embeddings = example_data['txt'].numpy()
 		example_name = img_path.split('/')[-1][:-4]
 
 		img_path = os.path.join(images_path, img_path)
 		img = open(img_path, 'rb').read()
 
-		ex = split.create_group(example_name)
-		ex.create_dataset('name', data=example_name)
-		ex.create_dataset('img', data=np.void(img))
-		ex.create_dataset('embeddings', data=embeddings.numpy())
-		ex.create_dataset('class', data=_class)
+		embeddings = embeddings[np.random.choice(range(10), 5)]
+
+		for c, e in enumerate(embeddings):
+			ex = split.create_group(example_name + '_' + str(c))
+			ex.create_dataset('name', data=example_name)
+			ex.create_dataset('img', data=np.void(img))
+			ex.create_dataset('embeddings', data=e)
+			ex.create_dataset('class', data=_class)
 
 		print(example_name)
 
