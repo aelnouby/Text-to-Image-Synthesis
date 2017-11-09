@@ -18,29 +18,29 @@ class generator(nn.Module):
 
 		self.projection = nn.Sequential(
 			nn.Linear(in_features=self.embed_dim, out_features=self.projected_embed_dim),
-			# nn.BatchNorm1d(),
+			nn.BatchNorm1d(num_features=self.projected_embed_dim),
 			nn.LeakyReLU(negative_slope=0.2, inplace=True)
 			)
 
 		# based on: https://github.com/pytorch/examples/blob/master/dcgan/main.py
 		self.netG = nn.Sequential(
-            nn.ConvTranspose2d(self.latent_dim, self.ngf * 8, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(self.ngf * 8),
-            nn.ReLU(True),
-            # state size. (ngf*8) x 4 x 4
-            nn.ConvTranspose2d(self.ngf * 8, self.ngf * 4, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(self.ngf * 4),
-            nn.ReLU(True),
-            # state size. (ngf*4) x 8 x 8
-            nn.ConvTranspose2d(self.ngf * 4, self.ngf * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(self.ngf * 2),
-            nn.ReLU(True),
-            # state size. (ngf*2) x 16 x 16
-            nn.ConvTranspose2d(self.ngf * 2,self.ngf, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(self.ngf),
-            nn.ReLU(True),
-            # state size. (ngf) x 32 x 32
-            nn.ConvTranspose2d(self.ngf, self.num_channels, 4, 2, 1, bias=False),
+			nn.ConvTranspose2d(self.latent_dim, self.ngf * 8, 4, 1, 0, bias=False),
+			nn.BatchNorm2d(self.ngf * 8),
+			nn.ReLU(True),
+			# state size. (ngf*8) x 4 x 4
+			nn.ConvTranspose2d(self.ngf * 8, self.ngf * 4, 4, 2, 1, bias=False),
+			nn.BatchNorm2d(self.ngf * 4),
+			nn.ReLU(True),
+			# state size. (ngf*4) x 8 x 8
+			nn.ConvTranspose2d(self.ngf * 4, self.ngf * 2, 4, 2, 1, bias=False),
+			nn.BatchNorm2d(self.ngf * 2),
+			nn.ReLU(True),
+			# state size. (ngf*2) x 16 x 16
+			nn.ConvTranspose2d(self.ngf * 2,self.ngf, 4, 2, 1, bias=False),
+			nn.BatchNorm2d(self.ngf),
+			nn.ReLU(True),
+			# state size. (ngf) x 32 x 32
+			nn.ConvTranspose2d(self.ngf, self.num_channels, 4, 2, 1, bias=False),
 			nn.Tanh()
 			 # state size. (num_channels) x 64 x 64
 			)
@@ -54,25 +54,13 @@ class generator(nn.Module):
 
 		return output
 
-	# based on: https://github.com/pytorch/examples/blob/master/dcgan/main.py
-	# def weights_init(m):
-	#     classname = m.__class__.__name__
-	#     if classname.find('Conv') != -1:
-	#         m.weight.data.normal_(0.0, 0.02)
-	#     elif classname.find('BatchNorm') != -1:
-	#         m.weight.data.normal_(1.0, 0.02)
-	# 		m.bias.data.fill_(0)
-
-
 class discriminator(nn.Module):
 	def __init__(self):
 		super(discriminator, self).__init__()
 		self.image_size = 64
 		self.num_channels = 3
-		self.noise_dim = 100
 		self.embed_dim = 1024
 		self.projected_embed_dim = 128
-		self.latent_dim = self.noise_dim + self.projected_embed_dim
 		self.ndf = 64
 
 		self.netD_1 = nn.Sequential(
@@ -97,7 +85,7 @@ class discriminator(nn.Module):
 		self.projector = Concat_embed(self.embed_dim, self.projected_embed_dim)
 
 		self.netD_2 = nn.Sequential( 
-		    nn.Conv2d(self.ndf * 8 + self.projected_embed_dim, 1, 4, 1, 0, bias=False),
+			nn.Conv2d(self.ndf * 8 + self.projected_embed_dim, 1, 4, 1, 0, bias=False),
 			nn.Sigmoid()
 			)	
 
