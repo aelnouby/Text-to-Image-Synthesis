@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import numpy as np
-from utils import Concat_embed
+from utils import Concat_embed, minibatch_discriminator
 import pdb
 
 class generator(nn.Module):
@@ -62,6 +62,8 @@ class discriminator(nn.Module):
 		self.embed_dim = 1024
 		self.projected_embed_dim = 128
 		self.ndf = 64
+		self.B_dim = 128
+		self.C_dim = 16
 
 		self.netD_1 = nn.Sequential(
 			# input is (nc) x 64 x 64
@@ -82,16 +84,19 @@ class discriminator(nn.Module):
 			# state size. (ndf*8) x 4 x 4
 		)
 
+		self.minibatch = minibatch_discriminator(self.ndf * 8, self.B_dim, self.C_dim).cuda()
+
 		self.projector = Concat_embed(self.embed_dim, self.projected_embed_dim)
 
-		self.netD_2 = nn.Sequential( 
-			nn.Conv2d(self.ndf * 8 + self.projected_embed_dim, 1, 4, 1, 0, bias=False),
+		self.netD_2 = nn.Sequential(
+			nn.Conv2d(self.ndf * 8 + self.projected_embed_dim + int(self.B_dim/16) , 1, 4, 1, 0, bias=False),
 			nn.Sigmoid()
 			)	
 
 	def forward(self, inp, embed):
-		x = self.netD_1(inp)
+		x_intermediate = self.netD_1(inp)
+		x = self.minibatch(x_intermediate)
 		x = self.projector(x, embed)
 		x = self.netD_2(x)
 
-		return x
+		return x.view(-1, 1).squeeze(1) #, x_intermediate
