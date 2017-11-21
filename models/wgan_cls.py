@@ -45,7 +45,6 @@ class generator(nn.Module):
 			 # state size. (num_channels) x 64 x 64
 			)
 
-
 	def forward(self, embed_vector, z):
 
 		projected_embed = self.projection(embed_vector).unsqueeze(2).unsqueeze(3)
@@ -55,48 +54,61 @@ class generator(nn.Module):
 		return output
 
 class discriminator(nn.Module):
-	def __init__(self):
+	def __init__(self, improved = False):
 		super(discriminator, self).__init__()
 		self.image_size = 64
 		self.num_channels = 3
 		self.embed_dim = 1024
 		self.projected_embed_dim = 128
 		self.ndf = 64
-		self.B_dim = 128
-		self.C_dim = 16
 
-		self.netD_1 = nn.Sequential(
-			# input is (nc) x 64 x 64
-			nn.Conv2d(self.num_channels, self.ndf, 4, 2, 1, bias=False),
-			nn.LeakyReLU(0.2, inplace=True),
-			# state size. (ndf) x 32 x 32
-			nn.Conv2d(self.ndf, self.ndf * 2, 4, 2, 1, bias=False),
-			nn.BatchNorm2d(self.ndf * 2),
-			nn.LeakyReLU(0.2, inplace=True),
-			# state size. (ndf*2) x 16 x 16
-			nn.Conv2d(self.ndf * 2, self.ndf * 4, 4, 2, 1, bias=False),
-			nn.BatchNorm2d(self.ndf * 4),
-			nn.LeakyReLU(0.2, inplace=True),
-			# state size. (ndf*4) x 8 x 8
-			nn.Conv2d(self.ndf * 4, self.ndf * 8, 4, 2, 1, bias=False),
-			nn.BatchNorm2d(self.ndf * 8),
-			nn.LeakyReLU(0.2, inplace=True),
-			# state size. (ndf*8) x 4 x 4
-		)
-
-		self.minibatch = minibatch_discriminator(self.ndf * 8, self.B_dim, self.C_dim).cuda()
+		if improved:
+			self.netD_1 = nn.Sequential(
+				# input is (nc) x 64 x 64
+				nn.Conv2d(self.num_channels, self.ndf, 4, 2, 1, bias=False),
+				nn.LeakyReLU(0.2, inplace=True),
+				# state size. (ndf) x 32 x 32
+				nn.Conv2d(self.ndf, self.ndf * 2, 4, 2, 1, bias=False),
+				nn.LeakyReLU(0.2, inplace=True),
+				# state size. (ndf*2) x 16 x 16
+				nn.Conv2d(self.ndf * 2, self.ndf * 4, 4, 2, 1, bias=False),
+				nn.LeakyReLU(0.2, inplace=True),
+				# state size. (ndf*4) x 8 x 8
+				nn.Conv2d(self.ndf * 4, self.ndf * 8, 4, 2, 1, bias=False),
+				nn.LeakyReLU(0.2, inplace=True),
+				# state size. (ndf*8) x 4 x 4
+			)
+		else:
+			self.netD_1 = nn.Sequential(
+				# input is (nc) x 64 x 64
+				nn.Conv2d(self.num_channels, self.ndf, 4, 2, 1, bias=False),
+				nn.LeakyReLU(0.2, inplace=True),
+				# state size. (ndf) x 32 x 32
+				nn.Conv2d(self.ndf, self.ndf * 2, 4, 2, 1, bias=False),
+				nn.BatchNorm2d(self.ndf * 2),
+				nn.LeakyReLU(0.2, inplace=True),
+				# state size. (ndf*2) x 16 x 16
+				nn.Conv2d(self.ndf * 2, self.ndf * 4, 4, 2, 1, bias=False),
+				nn.BatchNorm2d(self.ndf * 4),
+				nn.LeakyReLU(0.2, inplace=True),
+				# state size. (ndf*4) x 8 x 8
+				nn.Conv2d(self.ndf * 4, self.ndf * 8, 4, 2, 1, bias=False),
+				nn.BatchNorm2d(self.ndf * 8),
+				nn.LeakyReLU(0.2, inplace=True),
+				# state size. (ndf*8) x 4 x 4
+			)
 
 		self.projector = Concat_embed(self.embed_dim, self.projected_embed_dim)
 
 		self.netD_2 = nn.Sequential(
-			nn.Conv2d(self.ndf * 8 + self.projected_embed_dim + int(self.B_dim/16) , 1, 4, 1, 0, bias=False),
-			nn.Sigmoid()
-			)	
+			# nn.Conv2d(self.ndf * 8, 1, 4, 1, 0, bias=False),
+			nn.Conv2d(self.ndf * 8 + self.projected_embed_dim, 1, 4, 1, 0, bias=False)
+			)
 
 	def forward(self, inp, embed):
 		x_intermediate = self.netD_1(inp)
-		x = self.minibatch(x_intermediate)
-		x = self.projector(x, embed)
+		x = self.projector(x_intermediate, embed)
 		x = self.netD_2(x)
+		x = x.mean(0)
 
-		return x.view(-1, 1).squeeze(1) #, x_intermediate
+		return x.view(1) , x_intermediate
