@@ -49,13 +49,13 @@ class CUBDataset(Dataset):
         wrong_image = self.validate_image(wrong_image)
 
         sample = {
-                'right_image': torch.FloatTensor(right_image),
-                'right_emed': torch.FloatTensor(right_embed),
-                'wrong_image': torch.FloatTensor(wrong_image)
+                'right_images': torch.FloatTensor(right_image),
+                'right_embed': torch.FloatTensor(right_embed),
+                'wrong_images': torch.FloatTensor(wrong_image)
                  }
 
-        sample['right_image'] = sample['right_image'].sub_(128).div_(128)
-        sample['wrong_image'] =sample['wrong_image'].sub_(128).div_(128)
+        sample['right_images'] = sample['right_images'].sub_(128).div_(128)
+        sample['wrong_images'] =sample['wrong_images'].sub_(128).div_(128)
 
         return sample
 
