@@ -10,7 +10,7 @@ from torch.autograd import Variable
 import pdb
 import torch.nn.functional as F
 
-class CUBDataset(Dataset):
+class Text2ImageDataset(Dataset):
 
     def __init__(self, datasetFile, transform=None, split=0):
         self.datasetFile = datasetFile
@@ -41,6 +41,7 @@ class CUBDataset(Dataset):
         right_image = bytes(np.array(example['img']))
         right_embed = np.array(example['embeddings'], dtype=float)
         wrong_image = bytes(np.array(self.find_wrong_image(example['class'])))
+        inter_embed = np.array(self.find_inter_embed())
 
         right_image = Image.open(io.BytesIO(right_image)).resize((64, 64))
         wrong_image = Image.open(io.BytesIO(wrong_image)).resize((64, 64))
@@ -48,14 +49,18 @@ class CUBDataset(Dataset):
         right_image = self.validate_image(right_image)
         wrong_image = self.validate_image(wrong_image)
 
+        txt = np.array(example['txt']).astype(str)
+
         sample = {
                 'right_images': torch.FloatTensor(right_image),
                 'right_embed': torch.FloatTensor(right_embed),
-                'wrong_images': torch.FloatTensor(wrong_image)
+                'wrong_images': torch.FloatTensor(wrong_image),
+                'inter_embed': torch.FloatTensor(inter_embed),
+                'txt': str(txt)
                  }
 
-        sample['right_images'] = sample['right_images'].sub_(128).div_(128)
-        sample['wrong_images'] =sample['wrong_images'].sub_(128).div_(128)
+        sample['right_images'] = sample['right_images'].sub_(127.5).div_(127.5)
+        sample['wrong_images'] =sample['wrong_images'].sub_(127.5).div_(127.5)
 
         return sample
 
@@ -69,6 +74,12 @@ class CUBDataset(Dataset):
             return example['img']
 
         return self.find_wrong_image(category)
+
+    def find_inter_embed(self):
+        idx = np.random.randint(len(self.dataset_keys))
+        example_name = self.dataset_keys[idx]
+        example = self.dataset[self.split][example_name]
+        return example['embeddings']
 
 
     def validate_image(self, img):
