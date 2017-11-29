@@ -3,3 +3,4 @@ dataset/*
 *.pyc
 .idea/
 checkpoints/*
+results/*
