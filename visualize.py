@@ -14,7 +14,7 @@ class VisdomPlotter(object):
         self.env = env_name
         self.plots = {}
 
-    def plot(self, var_name, split_name, x, y, xlabel='Epochs'):
+    def plot(self, var_name, split_name, x, y, xlabel='epoch'):
         if var_name not in self.plots:
             self.plots[var_name] = self.viz.line(X=np.array([x,x]), Y=np.array([y,y]), env=self.env, opts=dict(
                 legend=[split_name],
