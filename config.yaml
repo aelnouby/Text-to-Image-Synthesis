@@ -1,10 +1,19 @@
+# Birds CUB dataset
 birds_images_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/CUB_200_2011/CUB_200_2011/images/'
 birds_embedding_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/cub_icml/'
-#birds_dataset_path: 'dataset/birds_tiny.hdf5'
+birds_text_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/cvpr2016_cub/text_c10/'
 birds_dataset_path: '/scratch/aelnouby/text2image/birds.hdf5'
-#birds_dataset_path: '/scratch/aelnouby/text2image/birds_tiny.hdf5'
 val_split_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/cub_icml/valclasses.txt'
 train_split_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/cub_icml/trainclasses.txt'
 test_split_path: '/export/mlrg/aelnouby/projects/GANs/Birds dataset/cub_icml/testclasses.txt'
 
 
+# flowers dataset
+flowers_images_path: '/export/mlrg/aelnouby/projects/GANs/flowers_dataset/'
+flowers_embedding_path: '/export/mlrg/aelnouby/projects/GANs/flowers_dataset/flowers_icml/'
+flowers_text_path: '/export/mlrg/aelnouby/projects/GANs/flowers_dataset/cvpr2016_flowers/text_c10/'
+flowers_dataset_path: '/scratch/aelnouby/text2image/flowers.hdf5'
+
+flowers_val_split_path: '/export/mlrg/aelnouby/projects/GANs/flowers_dataset/flowers_icml/valclasses.txt'
+flowers_train_split_path: '/export/mlrg/aelnouby/projects/GANs/flowers_dataset/flowers_icml/trainclasses.txt'
+flowers_test_split_path: '/export/mlrg/aelnouby/projects/GANs/flowers_dataset/flowers_icml/testclasses.txt'
