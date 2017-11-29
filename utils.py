@@ -52,12 +52,7 @@ class minibatch_discriminator(nn.Module):
 
 class Utils(object):
     def smooth_label(tensor, offset):
-        indices = np.random.choice(range(len(tensor)), int(len(tensor)))
-        prob = np.random.rand(len(indices))
-
-        tensor[indices] = tensor[indices] + (offset * prob)
-
-        return tensor
+        return tensor + offset
 
     # based on:  https://github.com/caogang/wgan-gp/blob/master/gan_cifar10.py
     def compute_GP(netD, real_data, real_embed, fake_data, LAMBDA):
@@ -82,7 +77,8 @@ class Utils(object):
 
         return gradient_penalty
 
-    def save_checkpoint(netD, netG, path, epoch):
+    def save_checkpoint(netD, netG, dir_path, subdir_path, epoch):
+        path =  os.path.join(dir_path, subdir_path)
         if not os.path.exists(path):
             os.makedirs(path)
 
@@ -99,16 +95,16 @@ class Utils(object):
 
 
 class Logger(object):
-    def __init__(self):
-        self.viz = VisdomPlotter()
+    def __init__(self, vis_screen):
+        self.viz = VisdomPlotter(env_name=vis_screen)
         self.hist_D = []
         self.hist_G = []
         self.hist_Dx = []
         self.hist_DGx = []
 
-    def log_iteration_wgan(self, epoch, gen_iteration, d_loss, g_loss, real_loss, fake_loss, gp):
-        print("Epoch: %d, Gen_iteration: %d, d_loss= %f, g_loss= %f, real_loss= %f, fake_loss = %f, GP= %f" %
-              (epoch, gen_iteration, d_loss.data.cpu().mean(), g_loss.data.cpu().mean(), real_loss, fake_loss, gp))
+    def log_iteration_wgan(self, epoch, gen_iteration, d_loss, g_loss, real_loss, fake_loss):
+        print("Epoch: %d, Gen_iteration: %d, d_loss= %f, g_loss= %f, real_loss= %f, fake_loss = %f" %
+              (epoch, gen_iteration, d_loss.data.cpu().mean(), g_loss.data.cpu().mean(), real_loss, fake_loss))
         self.hist_D.append(d_loss.data.cpu().mean())
         self.hist_G.append(g_loss.data.cpu().mean())
 
@@ -126,6 +122,16 @@ class Logger(object):
         self.viz.plot('Generator', 'train', epoch, np.array(self.hist_G).mean())
         self.hist_D = []
         self.hist_G = []
+
+    def plot_epoch_w_scores(self, epoch):
+        self.viz.plot('Discriminator', 'train', epoch, np.array(self.hist_D).mean())
+        self.viz.plot('Generator', 'train', epoch, np.array(self.hist_G).mean())
+        self.viz.plot('D(X)', 'train', epoch, np.array(self.hist_Dx).mean())
+        self.viz.plot('D(G(X))', 'train', epoch, np.array(self.hist_DGx).mean())
+        self.hist_D = []
+        self.hist_G = []
+        self.hist_Dx = []
+        self.hist_DGx = []
 
     def draw(self, right_images, fake_images):
         self.viz.draw('generated images', fake_images.data.cpu().numpy()[:64] * 128 + 128)
