@@ -2,7 +2,7 @@
 
 ## Intoduction
 
-This is a pytorch implementation of Generative Adversarial Text-to-Image Synthesis paper [1], we train a conditional generative adversarial network, conditioned on text descriptions, to generate images that correspond to the description. The network architecture is shown below (Image from [1]). This architecture is based on DCGAN.
+This is a pytorch implementation of [Generative Adversarial Text-to-Image Synthesis paper](https://arxiv.org/abs/1605.05396), we train a conditional generative adversarial network, conditioned on text descriptions, to generate images that correspond to the description. The network architecture is shown below (Image from [1]). This architecture is based on DCGAN.
 
 <figure><img src='images/pipeline.png'></figure>
 
@@ -35,7 +35,7 @@ We used the [text embeddings](https://github.com/reedscot/icml2016) provided by 
 
 - Use the converted hd5 datasets,  [birds](https://drive.google.com/open?id=1mNhn6MYpBb-JwE86GC1kk0VJsYj-Pn5j), [flowers](https://drive.google.com/open?id=1EgnaTrlHGaqK5CCgHKLclZMT_AMSTyh8)
 - Convert the data youself
-  1. download the dataset as described [here](https://github.com/reedscot/icml2016)
+  1. download the dataset as described [here](https://github.com/reedscot/cvpr2016)
   2. Add the paths to the dataset to `config.yaml` file.
   3. Use [convert_cub_to_hd5_script](convert_cub_to_hd5_script.py) or [convert_flowers_to_hd5_script](convert_flowers_to_hd5_script.py) script to convert the dataset.
   
