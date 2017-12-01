@@ -51,8 +51,12 @@ class minibatch_discriminator(nn.Module):
 
 
 class Utils(object):
+
+    @staticmethod
     def smooth_label(tensor, offset):
         return tensor + offset
+
+    @staticmethod
 
     # based on:  https://github.com/caogang/wgan-gp/blob/master/gan_cifar10.py
     def compute_GP(netD, real_data, real_embed, fake_data, LAMBDA):
@@ -77,6 +81,7 @@ class Utils(object):
 
         return gradient_penalty
 
+    @staticmethod
     def save_checkpoint(netD, netG, dir_path, subdir_path, epoch):
         path =  os.path.join(dir_path, subdir_path)
         if not os.path.exists(path):
@@ -85,6 +90,7 @@ class Utils(object):
         torch.save(netD.state_dict(), '{0}/disc_{1}.pth'.format(path, epoch))
         torch.save(netG.state_dict(), '{0}/gen_{1}.pth'.format(path, epoch))
 
+    @staticmethod
     def weights_init(m):
         classname = m.__class__.__name__
         if classname.find('Conv') != -1:

@@ -2,6 +2,7 @@ from models import gan, gan_cls, wgan_cls, wgan
 
 class gan_factory(object):
 
+    @staticmethod
     def generator_factory(type):
         if type == 'gan':
             return gan_cls.generator()
@@ -12,7 +13,7 @@ class gan_factory(object):
         elif type == 'vanilla_wgan':
             return wgan.generator()
 
-
+    @staticmethod
     def discriminator_factory(type):
         if type == 'gan':
             return gan_cls.discriminator()
