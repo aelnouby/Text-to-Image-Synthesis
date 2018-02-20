@@ -9,7 +9,7 @@ Image credits [1]
 
 ## Requirements
 
-- pytorch (if you want to use gradient penalty, you have to build from source)
+- pytorch 
 - visdom
 - h5py
 - PIL
